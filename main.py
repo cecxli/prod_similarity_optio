@@ -1,38 +1,21 @@
 import numpy as np
 import pandas as pd
 
-from sentence_transformers import SentenceTransformer
-
-from sklearn.cluster import KMeans
-from sklearn.metrics.pairwise import cosine_similarity
+import gdown
 
 from fastapi import FastAPI
 
-xls = pd.ExcelFile("./Data/ML Test Assignment - Similar Products Data.xlsx")
-cat_df = pd.read_excel(xls,'Categories')
-prod_df = pd.read_excel(xls,'Products')
-prodsp_df = pd.read_excel(xls,'ProductSpecifications')
+url = 'https://drive.google.com/uc?id=1KI8LMBf95Gylq8heYcaKY2WXHYrI9wl9'
 
-prodsp_df.drop_duplicates(inplace=True)
+output = 'cos_sim_data.csv'
 
-prod_df['Description'] = prod_df['Description'].map(str)
+gdown.download(url,output, quiet = False)
 
-text_data = prod_df['Description']
-model = SentenceTransformer('distilbert-base-nli-mean-tokens')
-embeddings = model.encode(text_data, show_progress_bar=True)
+cos_sim_data = pd.read_csv("cos_sim_data.csv")
 
-embeddings = pd.DataFrame(embeddings)
+map_df = pd.read_csv('./Data/Mapping.csv')
 
-X = np.array(embeddings)
-
-cos_sim_data = pd.DataFrame(cosine_similarity(X))
-
-cos_sim_data.set_index(prod_df.ProductId,inplace=True)
-
-map_df = pd.DataFrame()
-map_df['Index'] = prod_df.index
-map_df['Prod_id'] = prod_df['ProductId']
-
+map_df.set_index('Index',inplace=True)
 
 app = FastAPI()
 
