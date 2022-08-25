@@ -15,7 +15,7 @@ cos_sim_data = pd.read_csv("cos_sim_data.csv")
 
 map_df = pd.read_csv('./Data/Mapping.csv')
 
-map_df.set_index('Index',inplace=True)
+# map_df.set_index('Index',inplace=True)
 
 app = FastAPI()
 
